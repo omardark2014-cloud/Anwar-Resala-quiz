@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /sessions/{pin} {
+      allow read: if true;
+      allow write: if true;
+      match /players/{pid} { allow read, write: if true; }
+      match /scores/{pid}  { allow read, write: if true; }
+      match /answers/{id}  { allow read, write: if true; }
+      match /summary/{id}  { allow read, write: if true; }
+    }
+    match /courses/{cid} {
+      allow read: if true;
+      allow write: if true;
+      match /lectures/{lid} { allow read, write: if true; }
+    }
+    match /quizzes/{quizId} {
+      allow read: if true;
+      allow write: if true;
+      match /questions/{qid} { allow read, write: if true; }
+    }
+    match /volunteers/{id} { allow read, write: if true; }
+    match /events/{id}     { allow read, write: if true; }
+    match /feedback/{id}   { allow read, write: if true; }
+    match /site/{doc}      { allow read, write: if true; }
+  }
+}

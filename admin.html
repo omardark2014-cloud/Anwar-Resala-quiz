@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة الإدارة — أنوار رسالة</title>
+<style>
+:root{--primary:#2064df;--light:#d7eaf9;--bg:#0f172a;--card:#0f1b2e;--text:#eaf2ff;--muted:#9fb3d1;--stroke:#1f2f4a;--radius:18px}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Cairo",Tahoma,Arial;background:#0f172a}
+.wrap{max-width:1100px;margin:22px auto;padding:0 14px}.card{background:linear-gradient(180deg,var(--card),#0d1728);border:1px solid var(--stroke);border-radius:var(--radius);padding:18px}
+.table{width:100%;border-collapse:collapse}.table th,.table td{border-bottom:1px solid #1f2f4a;padding:8px;text-align:right}.table th{color:#cbd5e1}
+.btn{appearance:none;border:1px solid #2b3c58;background:#0b1222;color:#fff;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card"><h1>لوحة الإدارة</h1></div>
+  <div class="grid" style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="card"><h3>إحصائيات</h3>
+      <ul><li>الكورسات: <b id="countCourses">0</b></li><li>المتطوعون: <b id="countVol">0</b></li><li>الفعاليات: <b id="countEv">0</b></li><li>الاختبارات: <b id="countQuiz">0</b></li></ul>
+      <button class="btn" id="btnExportVol">تصدير المتطوعين CSV</button></div>
+    <div class="card"><h3>الإعلانات</h3><textarea id="ann" rows="3"></textarea><button class="btn" id="btnSaveAnn">حفظ</button></div>
+    <div class="card"><h3>اقتراحات</h3><table class="table" id="tblFb"></table></div>
+  </div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+const cfg={ apiKey:"YOUR_API_KEY", authDomain:"YOUR_PROJECT.firebaseapp.com", projectId:"YOUR_PROJECT_ID" };
+const app=initializeApp(cfg); const db=getFirestore(app); const el=id=>document.getElementById(id);
+async function counts(){ const c=await getDocs(collection(db,'courses')); el('countCourses').textContent=c.size; const v=await getDocs(collection(db,'volunteers')); el('countVol').textContent=v.size; const e=await getDocs(collection(db,'events')); el('countEv').textContent=e.size; const q=await getDocs(collection(db,'quizzes')); el('countQuiz').textContent=q.size; } counts();
+el('btnSaveAnn').onclick=async()=>{ const s=el('ann').value.trim(); const items=s?s.split(',').map(x=>x.trim()):[]; await setDoc(doc(db,'site','announcements'),{items}); alert('تم الحفظ'); };
+el('btnExportVol').onclick=async()=>{ const snap=await getDocs(collection(db,'volunteers')); const rows=[['name','phone','area','at']]; snap.forEach(d=>{ const v=d.data(); rows.push([v.name||'', v.phone||'', v.area||'', '']); }); const csv=rows.map(r=>r.join(',')).join('\n'); const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); const a=document.createElement('a'); a.href=url; a.download='volunteers.csv'; a.click(); URL.revokeObjectURL(url); };
+async function loadFb(){ const snap=await getDocs(collection(db,'feedback')); const rows=[['النص','تاريخ']]; snap.forEach(d=>{ const f=d.data(); rows.push([f.text||'', '']); }); el('tblFb').innerHTML=rows.map((r,ri)=>`<tr>${r.map(c=>`<${ri===0?'th':'td'}>${c}</${ri===0?'th':'td'}>`).join('')}</tr>`).join(''); } loadFb();
+</script>
+</body></html>

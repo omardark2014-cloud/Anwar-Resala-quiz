@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة المحاضر — أنوار رسالة</title>
+<style>
+:root{--primary:#2064df;--light:#d7eaf9;--bg:#0f172a;--card:#0f1b2e;--text:#eaf2ff;--muted:#9fb3d1;--stroke:#1f2f4a;--radius:18px}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Cairo",Tahoma,Arial;background:#0f172a}
+.wrap{max-width:1100px;margin:22px auto;padding:0 14px}.card{background:linear-gradient(180deg,var(--card),#0d1728);border:1px solid var(--stroke);border-radius:var(--radius);padding:18px}
+input,textarea,select{background:#0b1222;border:1px solid #152438;border-radius:12px;padding:12px;color:#eaf2ff;width:100%}.btn{appearance:none;border:1px solid #2b3c58;background:#0b1222;color:#fff;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;transition:.2s}.btn.brand{background:linear-gradient(90deg,var(--primary),#1b57c5);border-color:transparent}
+.table{width:100%;border-collapse:collapse}.table th,.table td{border-bottom:1px solid #1f2f4a;padding:8px;text-align:right}.table th{color:#cbd5e1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card"><h1>لوحة المحاضر</h1></div>
+  <div class="grid" style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="card"><h3>إضافة كورس</h3><input id="cTitle" placeholder="عنوان الكورس"><textarea id="cDesc" rows="2" placeholder="وصف مختصر"></textarea><button class="btn brand" id="btnAddCourse">حفظ</button></div>
+    <div class="card"><h3>إضافة محاضرة</h3><input id="courseId" placeholder="Course ID"><input id="lecTitle" placeholder="عنوان المحاضرة"><input id="lecMedia" placeholder="رابط YouTube أو PDF"><button class="btn brand" id="btnAddLecture">حفظ</button></div>
+    <div class="card"><h3>سؤال اختبار</h3><input id="qCourse" placeholder="Course ID"><select id="qType"><option value="single">اختيار واحد</option><option value="multi">اختيارات متعددة</option><option value="tf">صح/خطأ</option></select><textarea id="qTitle" rows="2" placeholder="نص السؤال"></textarea><div id="optZone"></div><button class="btn brand" id="btnAddQ">حفظ السؤال</button></div>
+  </div>
+  <div class="card"><h3>الكورسات</h3><table class="table" id="tblCourses"></table></div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc, deleteDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+const cfg={ apiKey:"YOUR_API_KEY", authDomain:"YOUR_PROJECT.firebaseapp.com", projectId:"YOUR_PROJECT_ID" };
+const app=initializeApp(cfg); const db=getFirestore(app); const el=id=>document.getElementById(id);
+
+async function addCourse(){ const title=el('cTitle').value.trim(), desc=el('cDesc').value.trim(); if(!title) return; const ref=doc(collection(db,'courses')); await setDoc(ref,{title,desc,createdAt:serverTimestamp()}); el('cTitle').value=''; el('cDesc').value=''; loadCourses(); }
+el('btnAddCourse').onclick=addCourse;
+
+async function addLecture(){ const cid=el('courseId').value.trim(), title=el('lecTitle').value.trim(), media=el('lecMedia').value.trim(); if(!cid||!title||!media) return; const ref=doc(collection(db,'courses',cid,'lectures')); await setDoc(ref,{title,media,createdAt:serverTimestamp()}); el('lecTitle').value=''; el('lecMedia').value=''; alert('تم'); }
+el('btnAddLecture').onclick=addLecture;
+
+function renderOptZone(){ const t=el('qType').value; const z=el('optZone'); z.innerHTML=''; if(t==='tf'){ z.innerHTML=`<label><input type='radio' name='tf' value='0' checked> صح</label> <label><input type='radio' name='tf' value='1'> خطأ</label>`; } else { for(let i=0;i<4;i++){ const d=document.createElement('div'); d.innerHTML=`<input data-opt placeholder='اختيار ${i+1}'> <label><input data-corr type='checkbox' value='${i}'> صحيح</label>`; z.appendChild(d);} } }
+renderOptZone(); el('qType').addEventListener('change',renderOptZone);
+
+async function addQ(){ const course=el('qCourse').value.trim(); if(!course) return; const type=el('qType').value; const title=el('qTitle').value.trim(); if(!title) return;
+  let options=[], answer=[]; if(type==='tf'){ options=['صح','خطأ']; const v=document.querySelector("input[name='tf']:checked"); answer=[v?Number(v.value):0]; } else { options=[...document.querySelectorAll('[data-opt]')].map(x=>x.value.trim()).filter(Boolean); answer=[...document.querySelectorAll('[data-corr]:checked')].map(x=>Number(x.value)); if(type==='single'&&answer.length!=1) return alert('اختر إجابة واحدة'); }
+  const quizId=course+'-quiz'; await setDoc(doc(db,'quizzes',quizId),{title:'اختبار '+course},{merge:true}); await setDoc(doc(collection(db,'quizzes',quizId,'questions')),{type,title,options,answer,points:1,createdAt:Date.now()}); el('qTitle').value=''; renderOptZone(); alert('تم حفظ السؤال'); }
+el('btnAddQ').onclick=addQ;
+
+async function loadCourses(){ const snap=await getDocs(collection(db,'courses')); const rows=[['المعرف','العنوان','محاضرات','اختبار']]; for(const d of snap.docs){ const cid=d.id; const c=d.data(); const l=await getDocs(collection(db,'courses',cid,'lectures')); rows.push([cid,c.title,(l.size||0), cid+'-quiz']); } document.getElementById('tblCourses').innerHTML=rows.map((r,ri)=>`<tr>${r.map(c=>`<${ri===0?'th':'td'}>${c}</${ri===0?'th':'td'}>`).join('')}</tr>`).join(''); }
+loadCourses();
+</script>
+</body></html>

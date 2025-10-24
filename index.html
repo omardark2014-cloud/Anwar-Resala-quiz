@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أنوار رسالة — منصة تعلم تفاعلية (Pro+)</title>
+<style>
+:root{--primary:#2064df;--light:#d7eaf9;--bg:#0f172a;--card:#0f1b2e;--ink:#0b1226;--text:#eaf2ff;--muted:#9fb3d1;--stroke:#1f2f4a;--radius:18px}
+*{box-sizing:border-box}body{margin:0;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Cairo",Tahoma,Arial;background:#0f172a}
+.wrap{max-width:1200px;margin:24px auto;padding:0 14px}.card{background:linear-gradient(180deg,var(--card),#0d1728);border:1px solid var(--stroke);border-radius:var(--radius);padding:18px}
+h1,h2,h3{margin:0 0 8px}.grid{display:grid;gap:14px}.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.muted{color:var(--muted)}
+.btn{appearance:none;border:1px solid #2b3c58;background:#0b1222;color:#fff;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px)}.btn.brand{background:linear-gradient(90deg,var(--primary),#1b57c5);border-color:transparent}.btn.warn{background:linear-gradient(90deg,#ffb74d,#f59e0b);border-color:transparent}
+input,select,textarea{background:#0b1222;border:1px solid #152438;border-radius:12px;padding:12px;color:#eaf2ff;width:100%}
+.badge{background:#0a1221;border:1px solid #23314a;border-radius:10px;padding:6px 10px;font-size:12px;color:#cbd5e1}
+.social{display:flex;gap:10px;flex-wrap:wrap}.social a{display:flex;align-items:center;gap:8px;border:1px solid #1f2f4a;padding:10px 12px;border-radius:12px;background:rgba(32,100,223,.06);text-decoration:none;color:#eaf2ff;font-weight:700;transition:.2s}.social a:hover{transform:translateY(-2px);border-color:var(--primary)}.social img{width:18px;height:18px}
+.ans{border:2px solid #223149;border-radius:14px;padding:16px;font-weight:800;cursor:pointer;transition:.2s;background:#0a1221;color:#eaf2ff}.ans.ok{border-color:rgba(34,211,163,.8);background:rgba(34,211,163,.1)}.ans.no{border-color:rgba(255,107,107,.8);background:rgba(255,107,107,.1)}
+.progress{height:10px;background:#0b1222;border:1px solid var(--stroke);border-radius:999px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,var(--primary),#1b57c5);width:0%}
+.timer{width:64px;height:64px;border-radius:50%;background:conic-gradient(var(--primary) var(--p,0%), #20304a 0);display:grid;place-items:center;font-weight:900;color:#fff}
+.lead li{display:flex;justify-content:space-between;gap:10px;padding:8px;border-bottom:1px solid #1c2a44}.medal{width:18px;height:18px;border-radius:50%;display:inline-block}.k1{background:#ffd700}.k2{background:#c0c0c0}.k3{background:#cd7f32}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" style="display:flex;gap:14px;align-items:center">
+    <img src="assets/whatsapp.svg" style="width:48px;height:48px">
+    <div>
+      <h1>أنوار رسالة — منصة تعلم تفاعلية</h1>
+      <div class="muted">العاشر من رمضان</div>
+    </div>
+    <div style="margin-inline-start:auto" class="row">
+      <a class="btn" href="instructor.html">لوحة المحاضر</a>
+      <a class="btn" href="admin.html">لوحة الإدارة</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>تابع وتواصل</h3>
+    <div class="social">
+      <a id="linkFacebook" href="#" target="_blank"><img src="assets/facebook.svg">فيسبوك</a>
+      <a id="linkInstagram" href="#" target="_blank"><img src="assets/instagram.svg">انستجرام</a>
+      <a id="linkWhatsApp" href="#" target="_blank"><img src="assets/whatsapp.svg">واتساب</a>
+      <a id="linkTelegram" href="#" target="_blank"><img src="assets/telegram.svg">تليجرام</a>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="card">
+      <h2>المضيف</h2>
+      <div class="grid">
+        <div class="row">
+          <div style="flex:1"><input id="hQuizId" placeholder="Quiz ID مثال: course-01-quiz"></div>
+          <button class="btn brand" id="btnCreate">إنشاء PIN</button>
+        </div>
+        <div class="row"><div class="badge timer" id="timerHost">0</div><div class="badge" id="hostState">جاهز</div><div class="badge" id="qBadge">س: 0</div></div>
+        <div class="row"><div class="pin" id="hostPIN">— — — — —</div></div>
+        <div class="row"><button class="btn brand" id="btnStart" disabled>ابدأ الجولة</button><button class="btn warn" id="btnNext" disabled>التالي</button></div>
+        <div><div class="small muted">اللاعبون:</div><ul id="players"></ul></div>
+        <div><h3>النتائج</h3><ol id="lead" class="lead"></ol><div class="small muted" id="qStats">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>اللاعب</h2>
+      <div class="grid">
+        <div class="row"><div style="flex:1"><input id="pPIN" placeholder="PIN"></div><div style="flex:1"><input id="pName" placeholder="اسمك"></div><button class="btn brand" id="btnJoin">انضم</button></div>
+        <div class="row hidden" id="pLobby"><div class="badge timer" id="timerPlayer">0</div><div class="badge" id="pScore">النتيجة: 0</div></div>
+        <div><h3 id="pQTitle">—</h3><div id="pOptions" class="grid" style="grid-template-columns:1fr;gap:10px"></div><button class="btn brand hidden" id="btnSubmitAns">إرسال الإجابة</button><div class="progress" style="margin-top:8px"><div class="bar" id="pBar"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+const cfg={ apiKey:"YOUR_API_KEY", authDomain:"YOUR_PROJECT.firebaseapp.com", projectId:"YOUR_PROJECT_ID" };
+const app=initializeApp(cfg); const db=getFirestore(app);
+const el=id=>document.getElementById(id); const randPIN=()=> String(Math.floor(10000 + Math.random()*90000));
+
+// Social links edit here
+const LINKS={facebook:"https://facebook.com/", instagram:"https://instagram.com/", whatsapp:"https://wa.me/201234567890", telegram:"https://t.me/"};
+["Facebook","Instagram","WhatsApp","Telegram"].forEach(n=>{ const k="link"+n; const key=n.toLowerCase(); const a=el(k); if(a) a.href = LINKS[key]; });
+
+let HOST={pin:null, quizId:null, quiz:null, timer:null, left:0, current:-1};
+let PLAYER={pin:null, id:null, name:null, score:0, unsub:null, picked:null};
+
+async function getQuiz(quizId){
+  const qdoc=await getDoc(doc(db,"quizzes",quizId));
+  const qSnap=await getDocs(collection(db,"quizzes",quizId,"questions"));
+  const items=qSnap.docs.map(d=>({id:d.id,...d.data()}));
+  return {title:(qdoc.exists()?qdoc.data().title:"اختبار"), items};
+}
+function startTimerHost(sec){ clearInterval(HOST.timer); HOST.left=sec; const t=el("timerHost");
+  const step=()=>{ const p=Math.max(0,Math.min(100,(HOST.left/sec)*100)); t.style.setProperty("--p",(p*3.6)+"deg"); t.textContent=HOST.left; HOST.left--; if(HOST.left<0){ clearInterval(HOST.timer); } };
+  step(); HOST.timer=setInterval(step,1000);
+}
+el("btnCreate").onclick=async()=>{
+  const quizId=el("hQuizId").value.trim(); if(!quizId) return alert("اكتب Quiz ID");
+  const q=await getQuiz(quizId); if(!q.items.length) return alert("لا توجد أسئلة!");
+  HOST.quizId=quizId; HOST.pin=randPIN(); await setDoc(doc(db,"sessions",HOST.pin),{quizId,state:"lobby",qIndex:-1,endsAt:0,createdAt:serverTimestamp()});
+  el("hostPIN").textContent=HOST.pin; el("btnStart").disabled=false;
+  onSnapshot(collection(db,"sessions",HOST.pin,"players"), snap=>{ const ul=el("players"); ul.innerHTML=""; snap.forEach(d=>{ const li=document.createElement("li"); li.textContent=d.data().name; ul.appendChild(li); }); });
+  onSnapshot(collection(db,"sessions",HOST.pin,"scores"), snap=>{ const arr=[]; snap.forEach(d=>arr.push(d.data())); arr.sort((a,b)=>b.score-a.score); document.querySelector("#lead").innerHTML=arr.map((r,i)=>`<li><span>${i<3?`<i class='medal k${i+1}'></i>`:""} ${r.name}</span><b>${r.score}</b></li>`).join(""); });
+  onSnapshot(doc(db,"sessions",HOST.pin), d=>{ const s=d.data(); el("hostState").textContent="الحالة: "+s.state; el("qBadge").textContent="س: "+(s.qIndex+1); if(s.endsAt>0){ startTimerHost(Math.max(0,Math.floor((s.endsAt-Date.now())/1000))); } });
+  HOST.quiz=q;
+};
+el("btnStart").onclick=()=>runQuestion(0);
+el("btnNext").onclick=()=>runQuestion(HOST.current+1);
+async function runQuestion(index){
+  if(index>=HOST.quiz.items.length){ await updateDoc(doc(db,"sessions",HOST.pin),{state:"ended",qIndex:index,endsAt:0}); alert("انتهت اللعبة 🎉"); return; }
+  HOST.current=index; const q=HOST.quiz.items[index]; const DUR=20; el("btnNext").disabled=true;
+  await updateDoc(doc(db,"sessions",HOST.pin),{state:"question",qIndex:index,endsAt:Date.now()+DUR*1000});
+  setTimeout(async()=>{
+    const ansSnap=await getDocs(query(collection(db,"sessions",HOST.pin,"answers"), where("qIndex","==",index)));
+    const counts=(q.options||[]).map(()=>0); let total=0; let correctPlayers=0; const updates=[];
+    ansSnap.forEach(d=>{ const a=d.data(); total++; let ok=false;
+      if(Array.isArray(a.pick)){ ok = JSON.stringify((a.pick||[]).slice().sort((x,y)=>x-y)) === JSON.stringify((q.answer||[]).slice().sort((x,y)=>x-y)); (a.pick||[]).forEach(i=>counts[i]=(counts[i]||0)+1); }
+      else { counts[a.pick]=(counts[a.pick]||0)+1; ok=(q.answer||[]).includes(a.pick); }
+      if(ok){ correctPlayers++; const base=Number(q.points||1); updates.push({pid:a.pid, add:base}); }
+    });
+    for(const u of updates){ const sRef=doc(db,"sessions",HOST.pin,"scores",u.pid); const sDoc=await getDoc(sRef); const prev=sDoc.exists()?sDoc.data().score||0:0; await setDoc(sRef,{id:u.pid,name:(sDoc.exists()?sDoc.data().name:""),score:prev+u.add},{merge:true}); }
+    await setDoc(doc(db,"sessions",HOST.pin,"summary","q"+index),{title:q.title,counts,correctPlayers,total});
+    await updateDoc(doc(db,"sessions",HOST.pin),{state:"result",endsAt:0}); el("qStats").textContent=`إجمالي: ${total} | صحيحة: ${correctPlayers} | توزيع: [${counts.join(", ")}]`; el("btnNext").disabled=false;
+  },DUR*1000);
+}
+el("btnJoin").onclick=async()=>{
+  const pin=el("pPIN").value.trim(); const name=el("pName").value.trim(); if(pin.length<5||!name) return alert("أدخل PIN واسمك");
+  const sRef=doc(db,"sessions",pin); const s=await getDoc(sRef); if(!s.exists()) return alert("PIN غير صحيح");
+  const pRef=doc(collection(db,"sessions",pin,"players")); await setDoc(pRef,{name,joinedAt:serverTimestamp()}); const id=pRef.id;
+  await setDoc(doc(db,"sessions",pin,"scores",id),{id,name,score:0}); el("pLobby").classList.remove("hidden");
+  onSnapshot(sRef, async d=>{
+    const ss=d.data(); if(ss.endsAt>0){ startTimerPlayer(Math.max(0,Math.floor((ss.endsAt-Date.now())/1000))); }
+    if(ss.state==="question"){ const quiz=await getQuiz(ss.quizId); const q=quiz.items[ss.qIndex]; el("pQTitle").textContent=q.title; const zone=el("pOptions"); zone.innerHTML="";
+      let picked=(q.type==="multi")?[]:null; (q.options||[]).forEach((opt,i)=>{ const b=document.createElement("button"); b.className="ans"; b.textContent=opt;
+        b.onclick=()=>{ if(q.type==="multi"){ const idx=picked.indexOf(i); if(idx==-1)picked.push(i); else picked.splice(idx,1); b.classList.toggle("ok"); } else { picked=i; [...zone.children].forEach(c=>c.classList.remove("ok")); b.classList.add("ok"); } };
+        zone.appendChild(b); });
+      document.getElementById("btnSubmitAns").classList.toggle("hidden", !(q.type==="multi"));
+      document.getElementById("btnSubmitAns").onclick=async()=>{ const key=id+"_"+ss.qIndex; const ansRef=doc(db,"sessions",pin,"answers",key); const prev=await getDoc(ansRef); if(prev.exists())return; await setDoc(ansRef,{pid:id,name,qIndex:ss.qIndex,pick:(q.type==="multi"?picked:picked),at:serverTimestamp()}); };
+    } else if(ss.state==="result"){ const quiz=await getQuiz(ss.quizId); const q=quiz.items[ss.qIndex]; const zone=el("pOptions"); [...zone.children].forEach((btn,idx)=>{ if((q.answer||[]).includes(idx)) btn.classList.add("ok"); else btn.classList.add("no"); }); }
+  });
+};
+let PT={timer:null,left:0}; function startTimerPlayer(sec){ clearInterval(PT.timer); PT.left=sec; const t=el("timerPlayer"), bar=el("pBar"); const step=()=>{ const p=Math.max(0,(PT.left/sec)); t.style.setProperty("--p",(p*360+"deg")); t.textContent=PT.left; bar.style.width=(100*(1-p))+'%'; PT.left--; if(PT.left<0) clearInterval(PT.timer); }; step(); PT.timer=setInterval(step,1000); }
+</script>
+</body></html>
