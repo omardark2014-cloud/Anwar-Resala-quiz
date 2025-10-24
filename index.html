@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>اختبارات أنوار رسالة — العاشر من رمضان</title>
+  <meta name="description" content="منصة اختبارات فريق أنوار رسالة (العاشر من رمضان) — واجهة طلاب + لوحة تحكم فريق.">
+  <style>
+    :root{
+      /* Brand palette (requested) */
+      --primary:#2064df;       /* لبني مُشبع */
+      --primary-50:#d7eaf9;    /* أزرق فاتح */
+      --accent:#18c9c5;        /* تركواز ناعم */
+      --success:#00c896;       /* أخضر نجاح */
+      --warning:#ffb74d;       /* برتقالي تحذير */
+      --bg:#0f172a;            /* كحلي مزرق داكن */
+      --text:#e5f0ff;          /* نص فاتح */
+      --muted:#9fb3d1;         /* رمادي مزرق */
+      --card:#101826;          /* خلفية الكروت */
+      --stroke:#233247;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0b1222 0%,var(--bg) 100%);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Cairo",Tahoma,Arial;color:var(--text)}
+    a{color:#bcd6ff}
+    .wrap{max-width:1100px;margin:36px auto;padding:0 14px}
+    .card{background:linear-gradient(180deg,var(--card) 0%,#0c1327 100%);border:1px solid var(--stroke);
+      border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:18px}
+    h1,h2,h3{margin:0 0 10px} h1{font-size:clamp(22px,3.5vw,30px)}
+    .muted{color:var(--muted)} .small{font-size:12px} .center{text-align:center}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .grid{display:grid;gap:12px}
+    .btn{appearance:none;border:1px solid #334155;background:#0b1222;color:var(--text);border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;transition:.2s}
+    .btn:hover{transform:translateY(-1px);border-color:#475569}
+    .btn.brand{background:linear-gradient(90deg,var(--primary),#1b57c5);border-color:transparent}
+    .btn.warn{background:linear-gradient(90deg,var(--warning),#f59e0b);border-color:transparent}
+    .btn.ghost{background:transparent}
+    .pill{display:inline-block;border:1px solid #334155;color:#cbd5e1;border-radius:999px;padding:4px 10px;font-size:12px}
+    .table{width:100%;border-collapse:collapse;border:1px solid var(--stroke);border-radius:12px;overflow:hidden}
+    .table th,.table td{border-bottom:1px solid var(--stroke);padding:10px;text-align:right}
+    .table th{background:#0b1222;color:#cbd5e1}
+    .field{display:flex;flex-direction:column;gap:6px}
+    input,textarea,select{background:#0b1222;border:1px solid #1f2937;border-radius:10px;padding:10px;color:var(--text)}
+    .q{border:1px solid #1f2937;border-radius:14px;padding:12px;background:#0b1222}
+    .opt{display:flex;gap:10px;align-items:center;border:1px solid #263244;background:#0a1221;border-radius:10px;padding:8px;margin:6px 0}
+    .progress{height:10px;background:#0b1222;border:1px solid #1f2937;border-radius:999px;overflow:hidden}
+    .bar{height:100%;background:linear-gradient(90deg,var(--primary),#1b57c5);width:0%}
+    .badge{background:#0a1221;border:1px solid #23314a;border-radius:10px;padding:6px 10px;font-size:12px;color:#cbd5e1}
+    .hidden{display:none}
+    .toast{position:fixed;inset-inline:0;top:12px;display:flex;justify-content:center;pointer-events:none;z-index:99}
+    .toast>div{pointer-events:auto;background:#0b1222;border:1px solid #273247;border-radius:12px;padding:10px 14px}
+    .hr{border:0;border-top:1px solid #273247;margin:12px 0}
+
+    /* Branded header */
+    header.brand{display:flex;align-items:center;gap:14px;padding:10px 14px;margin-bottom:16px;
+      background:linear-gradient(90deg,var(--primary-50),transparent);border:1px solid var(--stroke);border-radius:16px}
+    header.brand img{width:56px;height:56px;object-fit:contain;border-radius:10px;background:#000;box-shadow:0 0 0 2px var(--primary-50) inset}
+    header.brand h1{margin:0}
+    header.brand .sub{color:var(--muted);font-size:13px}
+    .chip{display:inline-flex;align-items:center;gap:8px;background:rgba(24,201,197,.08);border:1px solid rgba(24,201,197,.35);padding:6px 10px;border-radius:999px}
+    .chip i{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="brand">
+      <!-- ضع ملف الشعار بجوار index.html باسم logo.png -->
+      <img src="logo.png" alt="شعار أنوار رسالة">
+      <div>
+        <h1>اختبارات أنوار رسالة — العاشر من رمضان</h1>
+        <div class="sub">منصة تفاعلية: واجهة طلاب + لوحة تحكم للفريق</div>
+        <div class="chip" style="margin-top:6px"><i></i><span>ألوان الهوية: Primary <b>#2064df</b> / Light <b>#d7eaf9</b></span></div>
+      </div>
+    </header>
+
+    <!-- بقية المنصة: نسخة Firebase كاملة (Auth + Firestore) مثل الإصدار السابق -->
+    <div class="card" id="screen-landing">
+      <h2>ابدأ</h2>
+      <p class="muted">واجهة عامة للطلاب (اسم فقط) + لوحة تحكم للفريق بأكواد دخول.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:10px">
+        <div class="card">
+          <h3>للطــلاب</h3>
+          <div class="field"><label>Quiz ID</label><input id="stQuizId" placeholder="مثال: quiz-123"></div>
+          <div class="field"><label>اسمك</label><input id="stName" placeholder="اكتب اسمك"></div>
+          <div class="field"><label>المدة (دقائق)</label>
+            <select id="stDur"><option value="0">بدون مؤقت</option><option>5</option><option>10</option><option>20</option></select>
+          </div>
+          <div class="row" style="justify-content:space-between">
+            <span class="muted small">شارك هذا الرابط: <span id="stShare"></span></span>
+            <button class="btn brand" id="btnGoStudent">ابدأ كطالب</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>لوحة تحكم الفريق</h3>
+          <p class="small muted">دخول بإيميل/باسورد (Firebase Auth) — الأدوار: admin / editor.</p>
+          <div class="field"><label>البريد</label><input id="em" type="email" placeholder="name@example.com"></div>
+          <div class="field"><label>كلمة المرور</label><input id="pw" type="password" placeholder="••••••••"></div>
+          <div class="row">
+            <button class="btn" id="btnLogin">دخول</button>
+            <button class="btn ghost" id="btnSignup">تسجيل عضو جديد (مؤقت)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Quiz -->
+    <div class="card hidden" id="screen-quiz">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h2 id="quizTitle">اختبار</h2>
+          <div class="small muted" id="meta"></div>
+        </div>
+        <div class="row">
+          <span class="badge" id="timerBox">الوقت: ∞</span>
+          <span class="badge" id="scoreBox">الدرجة: 0</span>
+        </div>
+      </div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div id="qZone" class="grid" style="margin-top:10px"></div>
+      <div class="row" style="justify-content:space-between;margin-top:8px">
+        <button class="btn ghost" id="btnBackHome">رجوع</button>
+        <div class="row">
+          <button class="btn warn" id="btnCheck">تصحيح الآن</button>
+          <button class="btn brand" id="btnSubmit">إنهاء</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="card hidden" id="screen-result">
+      <h2>النتيجة</h2>
+      <p class="muted" id="summary"></p>
+      <table class="table" id="reviewTable"></table>
+      <div class="row" style="justify-content:space-between;margin-top:8px">
+        <button class="btn ghost" id="btnResultBack">الصفحة الرئيسية</button>
+        <button class="btn" id="btnExport">تنزيل JSON</button>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="card hidden" id="screen-dash">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h2>لوحة تحكم الفريق</h2>
+          <div class="small muted">المستخدم: <span id="whoami">-</span> | الدور: <span id="role">-</span></div>
+        </div>
+        <div class="row"><button class="btn ghost" id="btnOut">خروج</button></div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:10px">
+        <div class="card">
+          <h3>إعداد اختبار</h3>
+          <div class="field"><label>Quiz ID</label><input id="admQuizId" placeholder="مثال: quiz-123"></div>
+          <div class="field"><label>عنوان الاختبار</label><input id="admTitle" placeholder="اختبار تمهيدي"></div>
+          <div class="row" style="justify-content:space-between">
+            <span class="small muted">رابط الطلاب: <span id="admShare"></span></span>
+            <button class="btn brand" id="btnSaveTitle">حفظ العنوان</button>
+          </div>
+          <div class="hr"></div>
+          <h3>إضافة سؤال</h3>
+          <div class="field"><label>نوع السؤال</label>
+            <select id="qType"><option value="single">اختيار واحد</option><option value="multi">اختيارات متعددة</option><option value="tf">صح/خطأ</option></select>
+          </div>
+          <div class="field"><label>نص السؤال</label><textarea id="qTitle" rows="2" placeholder="اكتب السؤال..."></textarea></div>
+          <div id="optZone"></div>
+          <div class="row" style="justify-content:space-between">
+            <button class="btn" id="btnAddOpt">+ خيار</button>
+            <button class="btn brand" id="btnSaveQ">حفظ السؤال</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>قائمة الأسئلة</h3>
+          <table class="table" id="tblQs"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"><div id="toastMsg">تم</div></div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, query, getDocs, addDoc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    // ======= Firebase Config (بدّل القيم بمشروعك) =======
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const appFB = initializeApp(firebaseConfig);
+    const auth = getAuth(appFB);
+    const db = getFirestore(appFB);
+
+    const el = (id)=>document.getElementById(id);
+    const show = (id)=>["screen-landing","screen-quiz","screen-result","screen-dash"].forEach(s=>el(s).classList.toggle("hidden", s!==id));
+    function toast(msg){ const t=el("toast"); el("toastMsg").textContent=msg; t.classList.remove("hidden"); setTimeout(()=>t.classList.add("hidden"),1600); }
+
+    let ME=null, ROLE="viewer";
+    import { doc as ddoc, getDoc as gdoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+    onAuthStateChanged(auth, async (user)=>{
+      ME=user;
+      if(user){
+        try{
+          const p = await gdoc(ddoc(db,"userProfiles", user.uid));
+          ROLE = p.exists()? (p.data().role||"viewer") : "viewer";
+        }catch(e){ ROLE="viewer"; }
+        el("whoami").textContent = user.email;
+        el("role").textContent = ROLE;
+        show("screen-dash");
+      }else{
+        show("screen-landing");
+      }
+    });
+
+    el("btnLogin").onclick = async ()=>{
+      const em = el("em").value.trim(), pw = el("pw").value;
+      if(!em||!pw) return toast("اكتب البريد وكلمة المرور");
+      await signInWithEmailAndPassword(auth,em,pw).catch(e=>toast("فشل الدخول: "+e.message));
+    };
+    el("btnSignup").onclick = async ()=>{
+      const em = el("em").value.trim(), pw = el("pw").value;
+      if(!em||!pw) return toast("اكتب البريد وكلمة المرور");
+      const cred = await createUserWithEmailAndPassword(auth,em,pw).catch(e=>toast("فشل التسجيل: "+e.message));
+      if(cred?.user){
+        await setDoc(doc(db,"userProfiles", cred.user.uid), { role:"editor", createdAt: Date.now() });
+        toast("تم إنشاء Editor — عدّل الدور إلى admin من Firestore لو محتاج.");
+      }
+    };
+    el("btnOut").onclick = ()=>signOut(auth);
+
+    // ===== Student view =====
+    let QUIZ={id:"", title:"اختبار", items:[]};
+    let ST={name:"", dur:0, answers:{}, total:0, score:0, tsec:0, timer:null};
+
+    function updateShare(){
+      const qid = el("stQuizId").value.trim() || "default";
+      el("stShare").textContent = location.origin+location.pathname+"?quizId="+encodeURIComponent(qid);
+    }
+    el("stQuizId").addEventListener("input", updateShare); updateShare();
+
+    async function loadQuizById(qid){
+      const quizDoc = await getDoc(doc(db,"quizzes",qid));
+      const title = quizDoc.exists()? (quizDoc.data().title||"اختبار") : "اختبار";
+      const snap = await getDocs(query(collection(db,"quizzes",qid,"questions"), orderBy("createdAt","asc")));
+      const items = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      return { id: qid, title, items };
+    }
+
+    function renderQuiz(){
+      el("quizTitle").textContent = QUIZ.title;
+      el("meta").textContent = `المتعلم: ${ST.name} — ${QUIZ.id}`;
+      const z = el("qZone"); z.innerHTML=""; let total=0;
+      QUIZ.items.forEach((q,idx)=>{
+        total += Number(q.points||1);
+        const box = document.createElement("div"); box.className="q";
+        const head = document.createElement("div"); head.className="row"; head.style.justifyContent="space-between";
+        head.innerHTML = `<h3>${idx+1}. ${q.title}</h3><span class="pill">${q.points||1} نقطة</span>`;
+        const body = document.createElement("div");
+        if(q.type==="single"||q.type==="tf"){
+          (q.options||[]).forEach((opt,i)=>{
+            const line=document.createElement("label"); line.className="opt";
+            line.innerHTML=`<input type="radio" name="${q.id}" value="${i}"> <div>${opt}</div>`; body.appendChild(line);
+          });
+        }else if(q.type==="multi"){
+          (q.options||[]).forEach((opt,i)=>{
+            const line=document.createElement("label"); line.className="opt";
+            line.innerHTML=`<input type="checkbox" name="${q.id}" value="${i}"> <div>${opt}</div>`; body.appendChild(line);
+          });
+        }
+        box.appendChild(head); box.appendChild(body); z.appendChild(box);
+      });
+      ST.total=total; el("bar").style.width="0%"; el("scoreBox").textContent="الدرجة: 0";
+    }
+    function capture(){ const ans={}; let done=0;
+      QUIZ.items.forEach(q=>{
+        if(q.type==="single"||q.type==="tf"){ const p=[...document.querySelectorAll(`input[name="${q.id}"]:checked`)].map(x=>+x.value); ans[q.id]=p; if(p.length) done++; }
+        else { const p=[...document.querySelectorAll(`input[name="${q.id}"]:checked`)].map(x=>+x.value).sort((a,b)=>a-b); ans[q.id]=p; if(p.length) done++; }
+      });
+      ST.answers=ans; el("bar").style.width=`${(done/Math.max(QUIZ.items.length,1))*100}%`;
+    }
+    function checkNow(){ capture(); let score=0;
+      QUIZ.items.forEach(q=>{
+        if(q.type==="single"||q.type==="tf"){ const a=ST.answers[q.id]||[]; if(a.length===1 && (q.answer||[]).includes(a[0])) score+=Number(q.points||1); }
+        else { const a=(ST.answers[q.id]||[]).slice().sort((x,y)=>x-y); const c=(q.answer||[]).slice().sort((x,y)=>x-y); if(JSON.stringify(a)===JSON.stringify(c)) score+=Number(q.points||1); }
+      });
+      ST.score=score; el("scoreBox").textContent=`الدرجة: ${score}/${ST.total}`; toast("تصحيح مبدئي");
+    }
+    function startTimer(){ const d=ST.dur; if(!d||d<=0){ el("timerBox").textContent="الوقت: ∞"; return; }
+      ST.tsec=d*60; clearInterval(ST.timer); ST.timer=setInterval(()=>{ if(ST.tsec<=0){ clearInterval(ST.timer); el("timerBox").textContent="انتهى الوقت"; checkNow(); show("screen-result"); renderResult(); return; }
+        ST.tsec--; const m=String(Math.floor(ST.tsec/60)).padStart(2,"0"), s=String(ST.tsec%60).padStart(2,"0"); el("timerBox").textContent=`الوقت: ${m}:${s}`; },1000);
+    }
+    function renderResult(){
+      const percent=Math.round((ST.score/Math.max(ST.total,1))*100);
+      el("summary").textContent = `${ST.name} | ${QUIZ.title} | ${ST.score}/${ST.total} (${percent}%)`;
+      const rows=[["#","السؤال","إجابتك","الصحيح","النتيجة"]];
+      QUIZ.items.forEach((q,i)=>{
+        const your = Array.isArray(ST.answers[q.id])?(ST.answers[q.id]||[]).map(ii=>(q.options||[])[ii]).join("، "):"";
+        const corr = (q.answer||[]).map(ii=>(q.options||[])[ii]).join("، ");
+        const ok = (q.type==="single"||q.type==="tf") ? ((ST.answers[q.id]||[]).length===1 && (q.answer||[]).includes((ST.answers[q.id]||[])[0])) :
+                    ( JSON.stringify(((ST.answers[q.id]||[]).slice().sort((a,b)=>a-b))) === JSON.stringify(((q.answer||[]).slice().sort((a,b)=>a-b))) );
+        rows.push([i+1, q.title, your, corr, ok?"✔︎":"✗"]);
+      });
+      el("reviewTable").innerHTML = rows.map((r,ri)=>`<tr>${r.map(c=>`<${ri===0?"th":"td"}>${c}</${ri===0?"th":"td"}>`).join("")}</tr>`).join("");
+    }
+
+    el("btnGoStudent").onclick = async ()=>{
+      const id = el("stQuizId").value.trim() || (new URLSearchParams(location.search).get("quizId")||"default");
+      const name = el("stName").value.trim(); if(!name) return toast("اكتب اسمك");
+      ST.name=name; ST.dur=parseInt(el("stDur").value,10)||0;
+      QUIZ = await loadQuizById(id);
+      if(!QUIZ.items.length) return toast("لا توجد أسئلة لهذا الاختبار");
+      show("screen-quiz"); renderQuiz(); startTimer();
+    };
+    el("btnCheck").onclick = checkNow;
+    el("btnSubmit").onclick = ()=>{ checkNow(); show("screen-result"); renderResult(); };
+    el("btnBackHome").onclick = ()=> show("screen-landing");
+    el("btnResultBack").onclick = ()=> show("screen-landing");
+    el("btnExport").onclick = ()=>{
+      const blob = new Blob([JSON.stringify({quiz:QUIZ,student:ST},null,2)],{type:"application/json"});
+      const url=URL.createObjectURL(blob); const a=document.createElement("a");
+      a.href=url; a.download=`result-${QUIZ.id}-${Date.now()}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    };
+    document.addEventListener("change", e=>{ if(e.target.matches("input,select,textarea")) capture(); });
+
+    // ===== Dashboard =====
+    function ensureRole(){ return (ROLE==="admin"||ROLE==="editor"); }
+    function shareLink(qid){ return location.origin+location.pathname+"?quizId="+encodeURIComponent(qid); }
+
+    async function loadQuestionsTable(qid){
+      const snap = await getDocs(query(collection(db,"quizzes",qid,"questions"), orderBy("createdAt","asc")));
+      const rows=[["#","السؤال","النوع","النقاط","عمليات"]];
+      let i=1;
+      snap.forEach(d=>{
+        const q=d.data();
+        rows.push([i++, q.title, q.type, q.points||1, `<button class='btn small' data-edit='${d.id}'>تعديل</button> <button class='btn warn small' data-del='${d.id}'>حذف</button>`]);
+      });
+      el("tblQs").innerHTML = rows.map((r,ri)=>`<tr>${r.map(c=>`<${ri===0?"th":"td"}>${c}</${ri===0?"th":"td"}>`).join("")}</tr>`).join("");
+    }
+
+    function renderOptZone(){
+      const type = el("qType").value;
+      const z = el("optZone"); z.innerHTML="";
+      if(type==="tf"){
+        z.innerHTML = `<div class="row" style="align-items:center">
+          <label class="opt"><input type="radio" name="admTF" value="0" checked> <div>صح</div></label>
+          <label class="opt"><input type="radio" name="admTF" value="1"> <div>خطأ</div></label>
+        </div>`;
+      }else{
+        const list=document.createElement("div"); list.id="optList"; z.appendChild(list);
+        addOpt(""); addOpt("");
+      }
+    }
+    function addOpt(v=""){
+      const list=el("optList"); if(!list) return;
+      const i=list.children.length;
+      const row=document.createElement("div"); row.className="row"; row.style.alignItems="center";
+      row.innerHTML=`<input data-opt type="text" placeholder="نص الاختيار" value="${v.replace(/"/g,"&quot;")}" style="flex:1">
+                     <label class="small"><input data-corr type="checkbox" value="${i}"> صحيح</label>
+                     <button class="btn ghost" data-del>حذف</button>`;
+      row.querySelector("[data-del]").onclick=()=>row.remove(); list.appendChild(row);
+    }
+    el("btnAddOpt").onclick = ()=>{ if(el("qType").value!=="tf") addOpt(); };
+    el("qType").addEventListener("change", renderOptZone); renderOptZone();
+
+    function collectQ(){
+      const type=el("qType").value; const title=el("qTitle").value.trim(); if(!title) { toast("اكتب نص السؤال"); return null; }
+      let options=[], answer=[];
+      if(type==="tf"){ options=["صح","خطأ"]; const tf=document.querySelector('input[name="admTF"]:checked'); answer=[tf?Number(tf.value):0]; }
+      else{ options=[...document.querySelectorAll("[data-opt]")].map(x=>x.value.trim()).filter(Boolean);
+            answer=[...document.querySelectorAll("[data-corr]:checked")].map(x=>Number(x.value));
+            if(type==="single" && answer.length!=1){ toast("اختر إجابة واحدة"); return null; }
+            if(options.length<2){ toast("أضف خيارين على الأقل"); return null; } }
+      return { type, title, options, answer, points:1, createdAt: Date.now() };
+    }
+
+    el("btnSaveTitle").onclick = async ()=>{
+      if(!ensureRole()) return toast("صلاحية غير كافية");
+      const qid=el("admQuizId").value.trim(); if(!qid) return toast("اكتب Quiz ID");
+      const title=el("admTitle").value.trim()||"اختبار";
+      await setDoc(doc(db,"quizzes",qid), { title }, { merge:true });
+      el("admShare").textContent = shareLink(qid);
+      toast("تم حفظ العنوان");
+      await loadQuestionsTable(qid);
+    };
+    el("btnSaveQ").onclick = async ()=>{
+      if(!ensureRole()) return toast("صلاحية غير كافية");
+      const qid=el("admQuizId").value.trim(); if(!qid) return toast("اكتب Quiz ID");
+      const q=collectQ(); if(!q) return;
+      await addDoc(collection(db,"quizzes",qid,"questions"), q);
+      el("qTitle").value=""; renderOptZone();
+      await loadQuestionsTable(qid);
+      toast("تم حفظ السؤال");
+    };
+    el("tblQs").addEventListener("click", async (e)=>{
+      const delId=e.target.getAttribute("data-del");
+      const editId=e.target.getAttribute("data-edit");
+      const qid=el("admQuizId").value.trim();
+      if(delId){
+        if(!ensureRole()) return toast("صلاحية غير كافية");
+        await deleteDoc(doc(db,"quizzes",qid,"questions",delId));
+        await loadQuestionsTable(qid); toast("تم الحذف");
+      }else if(editId){
+        // تحميل ثم تعديل (حذف + إضافة جديد) للتبسيط
+        const d=await getDoc(doc(db,"quizzes",qid,"questions",editId)); if(!d.exists()) return;
+        const Q=d.data(); el("qType").value=Q.type; renderOptZone(); el("qTitle").value=Q.title;
+        if(Q.type==="tf"){ const v=(Q.answer||[])[0]||0; const r=document.querySelector(`input[name="admTF"][value="${v}"]`); if(r) r.checked=true; }
+        else{ const list=el("optList"); list.innerHTML=""; (Q.options||[]).forEach((t,idx)=>{ addOpt(t); const last=list.lastElementChild; if((Q.answer||[]).includes(idx)) last.querySelector("[data-corr]").checked=true; }); }
+        el("btnSaveQ").onclick = async ()=>{
+          if(!ensureRole()) return toast("صلاحية غير كافية");
+          const q=collectQ(); if(!q) return;
+          await deleteDoc(doc(db,"quizzes",qid,"questions",editId));
+          await addDoc(collection(db,"quizzes",qid,"questions"), q);
+          el("qTitle").value=""; renderOptZone(); await loadQuestionsTable(qid); toast("تم التعديل");
+          // إعادة الزر لوضع الإضافة
+          el("btnSaveQ").onclick = async ()=>{
+            const q2=collectQ(); if(!q2) return;
+            await addDoc(collection(db,"quizzes",qid,"questions"), q2);
+            el("qTitle").value=""; renderOptZone(); await loadQuestionsTable(qid); toast("تم حفظ السؤال");
+          };
+        };
+      }
+    });
+
+    el("admQuizId").addEventListener("input", ()=>{ el("admShare").textContent = shareLink(el("admQuizId").value.trim()||""); });
+    el("btnBackHome").onclick = ()=> show("screen-landing");
+
+    const qidURL = new URLSearchParams(location.search).get("quizId");
+    if(qidURL){ el("stQuizId").value=qidURL; updateShare(); }
+  </script>
+</body>
+</html>
